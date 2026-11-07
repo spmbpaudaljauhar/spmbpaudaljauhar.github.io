@@ -317,9 +317,34 @@ footer a{color:#fff}
 @media (max-width:640px){.ajak-tombol{width:100%}}
 </style>
 <style>#memuat{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--latar);font:600 1.1rem var(--body);color:var(--navy);z-index:999}</style>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<script>
+/* URL Web App Apps Script (Deploy > Manage deployments, berakhiran /exec) */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyYcNAGPvLZ6tnF9VAdm7sLof-NGktwO0VNXqOWLE79Q14fJ3vP7Zmi7ouczrmUWOWCVg/exec';
+const BOOT_KEY = 'spmb_aljauhar_boot_v1';
+async function api(fn, args) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ fn: fn, args: args || [] })
+  });
+  if (!res.ok) throw 'Server sedang sibuk (' + res.status + '). Coba lagi sebentar.';
+  const out = await res.json();
+  if (!out.ok) throw out.error || 'Terjadi kesalahan.';
+  return out.data;
+}
+/* Minta data ke server sedini mungkin, sambil halaman lain dimuat. */
+window.__bootP = (function () {
+  const prm = {};
+  new URLSearchParams(location.search).forEach((v, k) => { prm[k] = v; });
+  return api('getBoot', [prm]);
+})();
+window.__bootP.catch(() => {});
+</script>
 </head>
 <body>
-<div id="memuat" role="status">Memuat halaman pendaftaran…</div>
+<div id="memuat" role="status">Memuat halaman…</div>
 
 <header class="top">
   <div class="wrap">
@@ -489,27 +514,21 @@ footer a{color:#fff}
 </footer>
 
 <script>
-/* URL Web App Apps Script (Deploy > Manage deployments, berakhiran /exec) */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyYcNAGPvLZ6tnF9VAdm7sLof-NGktwO0VNXqOWLE79Q14fJ3vP7Zmi7ouczrmUWOWCVg/exec';
-
-async function api(fn, args) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ fn: fn, args: args || [] })
-  });
-  if (!res.ok) throw 'Server sedang sibuk (' + res.status + '). Coba lagi sebentar.';
-  const out = await res.json();
-  if (!out.ok) throw out.error || 'Terjadi kesalahan.';
-  return out.data;
-}
-
+/* Data awal: tampil seketika dari salinan di perangkat (kalau ada), lalu diperbarui dari server. */
 (async function mulai() {
-  const prm = {};
-  new URLSearchParams(location.search).forEach((v, k) => { prm[k] = v; });
+  const pakaiCache = !location.search;
+  let simpan = null;
+  if (pakaiCache) { try { simpan = JSON.parse(localStorage.getItem(BOOT_KEY) || 'null'); } catch (e) {} }
+  const segar = simpan && simpan.data && !simpan.data.error && Date.now() - (simpan.t || 0) < 14 * 24 * 3600 * 1000;
+
   let boot;
-  try { boot = await api('getBoot', [prm]); }
-  catch (e) { boot = { error: 'Tidak dapat terhubung ke server. Periksa koneksi internet lalu muat ulang halaman. (' + e + ')' }; }
+  if (segar) boot = simpan.data;
+  else {
+    try { boot = await window.__bootP; }
+    catch (e) { boot = { error: 'Tidak dapat terhubung ke server. Periksa koneksi internet lalu muat ulang halaman. (' + e + ')' }; }
+    if (pakaiCache && !boot.error) { try { localStorage.setItem(BOOT_KEY, JSON.stringify({ t: Date.now(), data: boot })); } catch (e) {} }
+  }
+
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r));
   window.__BOOT__ = boot;
   if (boot.settings) document.title = 'SPMB ' + (boot.settings.namaSekolah || 'PAUD AL-JAUHAR') + ' ' + (boot.settings.tahunAjaran || '');
@@ -519,6 +538,24 @@ async function api(fn, args) {
   app.textContent = document.getElementById('app-src').textContent;
   document.body.appendChild(app);
   const m = document.getElementById('memuat'); if (m) m.remove();
+
+  /* Kalau tadi memakai salinan, cek data terbaru di belakang layar. */
+  if (segar) {
+    let baru;
+    try { baru = await window.__bootP; } catch (e) { return; }
+    if (!baru || baru.error) return;
+    const beda = JSON.stringify(baru) !== JSON.stringify(simpan.data);
+    try { localStorage.setItem(BOOT_KEY, JSON.stringify({ t: Date.now(), data: baru })); } catch (e) {}
+    if (!beda) return;
+    /* Muat ulang (instan, dari salinan baru) hanya kalau orang tua belum mulai mengisi. */
+    const belumMengisi = typeof S !== 'undefined' && !Object.keys(S.answers || {}).length && !Object.keys(S.files || {}).length && (S.page || 0) === 0;
+    const statusTerbuka = !document.getElementById('view-status').classList.contains('hidden');
+    let terakhir = 0; try { terakhir = Number(sessionStorage.getItem('spmb_muat_ulang') || 0); } catch (e) {}
+    if (belumMengisi && !statusTerbuka && Date.now() - terakhir > 60000) {
+      try { sessionStorage.setItem('spmb_muat_ulang', String(Date.now())); } catch (e) {}
+      location.reload();
+    }
+  }
 })();
 </script>
 <script type="text/plain" id="app-src">
