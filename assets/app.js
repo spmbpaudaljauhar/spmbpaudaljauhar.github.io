@@ -620,6 +620,7 @@ async function cekStatus() {
    ========================================================= */
 const DEF_WEB = {
   visi: '', misi: '',
+  kegiatanPembelajaran: 'Pembelajaran di PAUD AL-JAUHAR menggunakan Model Pembelajaran Proyek dengan Media Loose Parts. Anak diberi kebebasan menentukan kegiatan bermain sesuai topik, dan guru berperan sebagai fasilitator.\n\nSetiap kegiatan dirancang menyenangkan melalui pendekatan bermain sambil belajar, dengan menanamkan nilai-nilai agama sebagai pembentuk karakter.',
   spmbPengantar: 'Pendaftaran murid baru dilakukan secara online. Siapkan dokumen yang diperlukan, isi formulir sampai selesai, lalu simpan nomor pendaftaran untuk mengecek status.',
   trialKeterangan: 'Kelas perkenalan untuk anak berusia 2-5 tahun terhadap kegiatan bermain sambil belajar yang menyenangkan di lingkungan sekolah.',
   trialJadwal: 'Setiap hari Sabtu, 08.00 – 11.00', trialInfo: '',
@@ -632,8 +633,9 @@ const RUTE = {
   '': { judul: '' },
   'selayang-pandang': { judul: 'Selayang Pandang', induk: 'Tentang Kami' },
   'visi-misi': { judul: 'Visi dan Misi', induk: 'Tentang Kami' },
+  'kegiatan-pembelajaran': { judul: 'Kegiatan Pembelajaran', induk: 'Tentang Kami' },
   'guru-tendik': { judul: 'Guru dan Tenaga Kependidikan', induk: 'Tentang Kami' },
-  'kb-tk': { judul: 'KB – TK', induk: 'Program' },
+  'kb-tk': { judul: 'TK – KB – TPA', induk: 'Program' },
   'kelas-trial': { judul: 'Kelas Trial', induk: 'Program' },
   'spmb': { judul: 'SPMB', induk: '' },
   'cek-status': { judul: 'Cek Status Pendaftaran', induk: 'SPMB' },
@@ -715,6 +717,12 @@ function renderSitus() {
   $('#vmVisi').textContent = visi || 'Visi sekolah sedang disiapkan.';
   $('#vmMisi').innerHTML = misi.length ? misi.map(m => '<li>' + esc(m) + '</li>').join('') : '<li class="kosong">Misi sekolah sedang disiapkan.</li>';
 
+  // Kegiatan pembelajaran: paragraf, baris berawalan - jadi daftar berpoin
+  $('#kpTeks').innerHTML = teksKaya(stWeb('kegiatanPembelajaran')) || '<p class="kosong">Informasi kegiatan pembelajaran segera hadir.</p>';
+  const kp = imgs('pembelajaran');
+  $('#kpFoto').innerHTML = kp.map(i => '<figure><img src="' + esc(i.url) + '" alt="' + esc(i.keterangan || 'Kegiatan pembelajaran') + '" loading="lazy">' + (i.keterangan ? '<figcaption>' + esc(i.keterangan) + '</figcaption>' : '') + '</figure>').join('');
+  $('#pembelajaran .kp-grid').classList.toggle('tanpa-foto', !kp.length);
+
   // Guru & tendik
   const guru = imgs('guru');
   $('#guruRel').innerHTML = guru.length ? guru.map(g => {
@@ -765,13 +773,21 @@ const SOSMED = {
   fb: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M13.4 21v-7.4h2.5l.4-2.9h-2.9V8.9c0-.8.2-1.4 1.4-1.4h1.6V4.9a20 20 0 0 0-2.3-.1c-2.2 0-3.8 1.4-3.8 3.9v2.1H7.8v2.9h2.5V21Z"/></svg>'
 };
 
+function teksKaya(t) {
+  return String(t || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => {
+    const b = p.split('\n').map(x => x.trim());
+    if (b.every(x => /^[-•*]\s*/.test(x))) return '<ul class="kp-daftar">' + b.map(x => '<li>' + esc(x.replace(/^[-•*]\s*/, '')) + '</li>').join('') + '</ul>';
+    return '<p>' + b.map(esc).join('<br>') + '</p>';
+  }).join('');
+}
+
 /* ---------- guru: geser ke samping ---------- */
 function geserGuru(d) { const rel = $('#guruRel'); const k = rel.querySelector('.guru-kartu'); rel.scrollBy({ left: d * ((k ? k.offsetWidth : 240) + 20) * 2, behavior: 'smooth' }); }
 
 /* ---------- animasi muncul ke atas ---------- */
 let pengamat = null;
 function pasangReveal() {
-  const target = document.querySelectorAll('#view-home .alis, #view-home .judul, #view-home .judul-kecil, #view-home .lead, #view-home .status-kartu, .tiket, .sp-teks p, .sp-gambar img, .prestasi li, .chip-list li, .vm-visi, .vm-misi li, .guru-kartu, .prog-kartu, .layanan-kartu, .trial-foto, .jadwal-kartu, .trial-info, #trialWa, #info .kotak, .galeri, #ajak .wrap > *, .hero-teks > *, .page-head .wrap > *');
+  const target = document.querySelectorAll('#view-home .alis, #view-home .judul, #view-home .judul-kecil, #view-home .lead, #view-home .status-kartu, .tiket, .sp-teks p, .kp-teks p, .kp-daftar li, .kp-foto figure, .sp-gambar img, .prestasi li, .chip-list li, .vm-visi, .vm-misi li, .guru-kartu, .prog-kartu, .layanan-kartu, .trial-foto, .jadwal-kartu, .trial-info, #trialWa, #info .kotak, .galeri, #ajak .wrap > *, .hero-teks > *, .page-head .wrap > *');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { target.forEach(el => el.classList.add('tampil')); return; }
   if (!pengamat) pengamat = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('tampil'); pengamat.unobserve(e.target); } }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   const urut = new Map();
