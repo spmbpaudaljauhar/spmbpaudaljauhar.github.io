@@ -659,3 +659,25 @@ footer.kaki::before{content:"";position:absolute;left:0;right:0;top:-46px;height
   .btn:hover{transform:translateY(-2px) scale(1.02)}
   .sos:hover{transform:translateY(-3px) rotate(-4deg)}
 }
+
+/* hiasan: satu per kelompok halaman, tinggi dibatasi */
+.hiasan{margin:0;line-height:0}
+.hiasan img{width:100%;height:clamp(180px,24vw,340px);object-fit:cover;object-position:center}
+#gelombang + .hiasan{margin-top:0}
+
+/* kegiatan pembelajaran */
+.kp-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:start}
+.kp-grid.tanpa-foto{grid-template-columns:1fr}
+@media (max-width:860px){.kp-grid{grid-template-columns:1fr;gap:32px}}
+.kp-teks p{font-size:1.04rem;color:#34405E;margin:0 0 1em;max-width:66ch}
+.kp-daftar{list-style:none;padding:0;margin:0 0 1.2em;display:grid;gap:10px}
+.kp-daftar li{position:relative;padding-left:30px}
+.kp-daftar li::before{content:"";position:absolute;left:4px;top:.45em;width:14px;height:14px;border-radius:50%;background:var(--kuning);box-shadow:0 0 0 4px #FFF4CC}
+.kp-daftar li:nth-child(3n+2)::before{background:var(--langit);box-shadow:0 0 0 4px #E5F5FB}
+.kp-daftar li:nth-child(3n+3)::before{background:var(--pink);box-shadow:0 0 0 4px #FDE7EC}
+.kp-foto{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.kp-foto figure{margin:0;border-radius:20px;overflow:hidden;background:var(--latar-2);box-shadow:var(--bayang)}
+.kp-foto figure:first-child{grid-column:1/-1}
+.kp-foto img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.kp-foto figure:first-child img{aspect-ratio:16/10}
+.kp-foto figcaption{padding:10px 14px;font-size:.88rem;color:var(--abu);font-weight:500}
