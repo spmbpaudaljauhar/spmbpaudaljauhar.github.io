@@ -52,9 +52,9 @@ function templateSitus() {
   '<a class="brand" href="' + href('') + '" data-rute=""><img id="logo" class="hidden" alt=""><b id="brandName">PAUD AL-JAUHAR</b></a>' +
   '<button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navUtama" aria-label="Menu"><span></span><span></span><span></span></button>' +
   '<nav class="nav" id="navUtama" aria-label="Menu utama">' +
-    '<div class="nav-grup"><button class="nav-induk" type="button" aria-expanded="false" data-grup="tentang">Tentang Kami' + IKON.panah + '</button><div class="nav-sub">' + a('selayang-pandang', 'Selayang Pandang') + a('visi-misi', 'Visi Misi') + '</div></div>' +
+    '<div class="nav-grup"><button class="nav-induk" type="button" aria-expanded="false" data-grup="tentang">Tentang Kami' + IKON.panah + '</button><div class="nav-sub">' + a('selayang-pandang', 'Selayang Pandang') + a('visi-misi', 'Visi Misi') + a('kegiatan-pembelajaran', 'Kegiatan Pembelajaran') + '</div></div>' +
     a('guru-tendik', 'Guru &amp; Tendik') +
-    '<div class="nav-grup"><button class="nav-induk" type="button" aria-expanded="false" data-grup="program">Program' + IKON.panah + '</button><div class="nav-sub">' + a('kb-tk', 'KB – TK') + a('kelas-trial', 'Kelas Trial') + '</div></div>' +
+    '<div class="nav-grup"><button class="nav-induk" type="button" aria-expanded="false" data-grup="program">Program' + IKON.panah + '</button><div class="nav-sub">' + a('kb-tk', 'TK – KB – TPA') + a('kelas-trial', 'Kelas Trial') + '</div></div>' +
     a('spmb', 'SPMB') + a('cek-status', 'Cek Status') + a('daftar', 'Daftar', 'nav-daftar') +
   '</nav>' +
 '</div></header>' +
@@ -80,7 +80,11 @@ function templateSitus() {
       '<div class="sp-grid" id="spGrid"><div class="sp-teks"><span class="alis">Tentang Kami</span><h2 class="judul" id="spJudul">Selayang Pandang</h2><div id="spTeks"></div></div><div class="sp-gambar" id="spGambar"></div></div>' +
       '<div id="prestasiBox" class="hidden prestasi-box"><span class="alis">Prestasi</span><h2 class="judul">Prestasi dan pengakuan</h2><ul class="prestasi" id="prestasiList"></ul></div>' +
     '</div></section>' +
-    '<section class="blok kegiatan hidden" id="kegiatanBox" data-hal="selayang-pandang"><div class="wrap"><span class="alis">Kegiatan</span><h2 class="judul">Kegiatan unggulan</h2><ul class="chip-list" id="kegiatanList"></ul></div></section>' +
+    '<section class="blok" id="pembelajaran" data-hal="kegiatan-pembelajaran"><div class="wrap"><div class="kp-grid">' +
+      '<div class="kp-teks"><span class="alis">Tentang Kami</span><h2 class="judul">Kegiatan pembelajaran</h2><div id="kpTeks"></div></div>' +
+      '<div class="kp-foto" id="kpFoto"></div>' +
+    '</div></div></section>' +
+    '<section class="blok kegiatan hidden" id="kegiatanBox" data-hal="kegiatan-pembelajaran"><div class="wrap"><span class="alis">Kegiatan</span><h2 class="judul">Kegiatan unggulan</h2><ul class="chip-list" id="kegiatanList"></ul></div></section>' +
     '<section class="blok" id="visimisi" data-hal="visi-misi"><div class="wrap sempit">' +
       '<div class="vm-visi"><span class="alis">Visi</span><p id="vmVisi"></p></div>' +
       '<div class="vm-misi"><span class="alis">Misi</span><ol id="vmMisi"></ol></div>' +
@@ -90,7 +94,7 @@ function templateSitus() {
       '<div class="guru-rel" id="guruRel" tabindex="0" aria-label="Daftar guru dan tendik"></div>' +
     '</div></section>' +
     '<section class="blok" id="program" data-hal="kb-tk"><div class="wrap">' +
-      '<span class="alis">Program</span><h2 class="judul">Kelompok Bermain dan Taman Kanak-kanak</h2>' +
+      '<span class="alis">Program</span><h2 class="judul">TK – KB – TPA</h2>' +
       '<div class="prog-grid" id="jjList"></div>' +
       '<div id="layananBox"><h3 class="judul-kecil">Pilihan layanan</h3><div class="layanan-grid" id="layananList"></div></div>' +
     '</div></section>' +
@@ -105,8 +109,8 @@ function templateSitus() {
       '<div class="kotak"><h3 class="judul-kecil" id="infoJudul">Alur pendaftaran</h3><figure class="alur-gambar hidden" id="alurGambar"></figure><div id="infoTeks"></div></div>' +
     '</div></div></section>' +
     '<section class="blok hidden" id="galeriBox" data-hal="home"><div class="wrap"><span class="alis">Galeri</span><h2 class="judul">Galeri kegiatan</h2><div class="galeri" id="galeri" aria-roledescription="carousel" aria-label="Foto kegiatan sekolah" tabindex="0"></div><div class="g-titik" id="galeriTitik"></div></div></section>' +
-    '<figure class="hiasan hidden" data-hiasan="1" data-hal="home"></figure>' +
-    '<figure class="hiasan hidden" data-hiasan="2" data-hal="home"></figure>' +
+    '<figure class="hiasan hidden" data-hiasan="1" data-hal="selayang-pandang visi-misi kegiatan-pembelajaran guru-tendik"></figure>' +
+    '<figure class="hiasan hidden" data-hiasan="2" data-hal="kb-tk kelas-trial spmb cek-status"></figure>' +
     '<section class="ajak" id="ajak" data-hal="home spmb"><div class="wrap">' +
       '<h2 id="ajakJudul">Daftarkan putra-putri Ayah Bunda di PAUD AL&#8209;JAUHAR sekarang!</h2>' +
       '<div class="ajak-tombol"><button class="btn btn-navy" id="ajakDaftar" onclick="startForm()">Isi formulir pendaftaran</button>' +
@@ -136,8 +140,8 @@ function templateSitus() {
   '<div class="kaki-merek"><div class="kaki-logo"><img id="footLogo" class="hidden" alt=""><b id="footNama">PAUD AL-JAUHAR</b></div>' +
     '<p class="kaki-baris hidden" id="footAlamat"></p><p class="kaki-baris hidden" id="footWa"></p><p class="kaki-baris hidden" id="footEmail"></p>' +
     '<div class="sosmed-ikon" id="footSosmed"></div><div id="footKontak" hidden></div></div>' +
-  '<div class="kaki-menu"><h3>Tentang Kami</h3>' + a('selayang-pandang', 'Selayang Pandang') + a('visi-misi', 'Visi Misi') + a('guru-tendik', 'Guru &amp; Tendik') + '</div>' +
-  '<div class="kaki-menu"><h3>Program</h3>' + a('kb-tk', 'KB – TK') + a('kelas-trial', 'Kelas Trial') + '</div>' +
+  '<div class="kaki-menu"><h3>Tentang Kami</h3>' + a('selayang-pandang', 'Selayang Pandang') + a('visi-misi', 'Visi Misi') + a('kegiatan-pembelajaran', 'Kegiatan Pembelajaran') + a('guru-tendik', 'Guru &amp; Tendik') + '</div>' +
+  '<div class="kaki-menu"><h3>Program</h3>' + a('kb-tk', 'TK – KB – TPA') + a('kelas-trial', 'Kelas Trial') + '</div>' +
   '<div class="kaki-menu"><h3>SPMB</h3>' + a('spmb', 'Info SPMB') + a('daftar', 'Daftar') + a('cek-status', 'Cek Status') + '</div>' +
 '</div><div class="kaki-bawah"><div class="wrap"><span id="hakCipta">© ' + new Date().getFullYear() + ' PAUD AL-JAUHAR. All rights reserved.</span><a class="admin-link" id="adminLink" href="#" target="_blank" rel="noopener">Masuk admin</a></div></div></footer>';
 }
