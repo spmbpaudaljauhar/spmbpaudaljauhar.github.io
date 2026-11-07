@@ -2,8 +2,12 @@
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halaman tidak ditemukan · PAUD AL-JAUHAR</title>
 <script>
-/* /SPMB, /Spmb, dll. diarahkan ke /spmb/ beserta isi tautannya */
-if (location.pathname.toLowerCase().replace(/\/+$/, '') === '/spmb') location.replace('/spmb/' + location.search + location.hash);
+/* Alamat dengan huruf besar (mis. /SPMB, /KB-TK) diarahkan ke alamat huruf kecil */
+(function () {
+  var ada = ['selayang-pandang', 'visi-misi', 'guru-tendik', 'kb-tk', 'kelas-trial', 'spmb', 'cek-status', 'daftar'];
+  var p = location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  if (ada.indexOf(p) >= 0) location.replace('/' + p + '/' + location.search + location.hash);
+})();
 </script>
-<style>body{font-family:system-ui,sans-serif;max-width:40ch;margin:80px auto;padding:0 20px;color:#1A2747}a{color:#1F3F95}</style>
-</head><body><h1>Halaman tidak ditemukan</h1><p>Alamat yang dibuka tidak ada. Kembali ke <a href="/">beranda</a> atau buka <a href="/spmb/">halaman pendaftaran</a>.</p></body></html>
+<style>body{font-family:system-ui,sans-serif;max-width:44ch;margin:96px auto;padding:0 20px;color:#16213D}a{color:#1B3A8A}</style>
+</head><body><h1>Halaman tidak ditemukan</h1><p>Alamat yang dibuka tidak ada. Kembali ke <a href="/">beranda</a> atau buka <a href="/spmb/">info SPMB</a>.</p></body></html>
