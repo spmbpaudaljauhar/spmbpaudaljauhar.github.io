@@ -489,7 +489,7 @@ footer a{color:#fff}
 </footer>
 
 <script>
-/* ===== GANTI dengan URL Web App Apps Script (Deploy > Manage deployments, berakhiran /exec) ===== */
+/* URL Web App Apps Script (Deploy > Manage deployments, berakhiran /exec) */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyYcNAGPvLZ6tnF9VAdm7sLof-NGktwO0VNXqOWLE79Q14fJ3vP7Zmi7ouczrmUWOWCVg/exec';
 
 async function api(fn, args) {
@@ -1138,7 +1138,36 @@ async function cekStatus() {
   b.disabled = false; b.textContent = 'Cek status';
 }
 
+/* ---------- dua alamat: beranda (/) dan formulir (/spmb/) ----------
+   File yang sama dipasang di index.html dan spmb/index.html.
+   Di "/" tampil beranda; tombol Daftar membuka /spmb/.
+   Di "/spmb/" formulir langsung terbuka; Beranda/Batal kembali ke "/". */
+const DI_SPMB = /^\/spmb(\/|$)/i.test(location.pathname);
+function paramTetap() {
+  const p = new URLSearchParams(location.search);
+  p.delete('lengkapi'); p.delete('k');
+  const q = p.toString();
+  return q ? '?' + q : '';
+}
+const startFormAsli = startForm, goHomeAsli = goHome;
+startForm = function () {
+  if (!DI_SPMB && S.d.gel && S.d.gel.open) { location.href = '/spmb/' + paramTetap(); return; }
+  return startFormAsli();
+};
+goHome = function (anchor) {
+  if (DI_SPMB) { location.href = '/' + paramTetap() + (anchor ? '#' + anchor : ''); return; }
+  return goHomeAsli(anchor);
+};
+
 renderHome();
+if (!S.d.error) {
+  if (DI_SPMB) {
+    document.title = 'Formulir Pendaftaran ' + document.title;
+    if (!S.d.lengkapi && S.d.gel && S.d.gel.open) startFormAsli();
+  } else if (location.hash) {
+    setTimeout(() => { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }, 50);
+  }
+}
 </script>
 </body>
 </html>
