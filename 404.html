@@ -4,7 +4,7 @@
 <script>
 /* Alamat dengan huruf besar (mis. /SPMB, /KB-TK) diarahkan ke alamat huruf kecil */
 (function () {
-  var ada = ['selayang-pandang', 'visi-misi', 'guru-tendik', 'kb-tk', 'kelas-trial', 'spmb', 'cek-status', 'daftar'];
+  var ada = ['selayang-pandang', 'visi-misi', 'kegiatan-pembelajaran', 'guru-tendik', 'kb-tk', 'kelas-trial', 'spmb', 'cek-status', 'daftar'];
   var p = location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
   if (ada.indexOf(p) >= 0) location.replace('/' + p + '/' + location.search + location.hash);
 })();
