@@ -642,10 +642,10 @@ const RUTE = {
   'daftar': { judul: 'Formulir Pendaftaran', induk: 'SPMB' }
 };
 function ruteSekarang() {
-  let r = PREVIEW ? location.hash.slice(1) : location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
-  r = String(r || '').toLowerCase();
-  if (r === 'beranda') r = '';
-  return r in RUTE ? r : '';
+  if (PREVIEW) { const h = location.hash.slice(1).toLowerCase(); return h in RUTE ? h : ''; }
+  const p = location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  const r = Object.keys(ALAMAT).find(k => ALAMAT[k] === p);
+  return r === undefined ? '' : r;
 }
 function paramTetap() {
   if (PREVIEW) return '';
