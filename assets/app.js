@@ -249,8 +249,11 @@ function introHtml() {
     '<div class="siap-grid"><div class="siap"><h3>Berkas yang diunggah</h3><ul>' + S.d.docs.map(d => '<li>' + esc(d.nama) + (d.wajib ? '' : ' (jika ada)') + '</li>').join('') + '</ul><small>Foto dari kamera HP boleh, maksimal 3 MB per file.</small></div>' +
     (siap.length ? '<div class="siap"><h3>Data yang perlu disiapkan</h3><ul>' + siap.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' : '') + '</div>';
   if (st.biayaPendaftaran || st.infoPembayaran) h += '<div class="info-box kuning"><b>Transfer biaya pendaftaran terlebih dahulu</b>, karena bukti transfer diunggah di akhir formulir.<div style="white-space:pre-line;margin-top:6px">' + (st.biayaPendaftaran ? 'Biaya pendaftaran <b>' + esc(rupiah(st.biayaPendaftaran)) + '</b>\n' : '') + esc(st.infoPembayaran || '') + '</div></div>';
-  if (a) h += '<div class="info-box">Pendaftaran gelombang <b>' + esc(a.nama) + '</b>, ' + tglPendek(a.mulai) + ' sampai ' + tgl(a.selesai) + '.</div>';
-  const n = noteGelombang(); if (n) h += '<div class="info-box kuning">' + esc(n) + '</div>';
+  if (S.d.jalan) h += '<div class="info-box">Pendaftaran <b>tahun berjalan</b> untuk TA <b>' + esc(S.d.jalan.ta) + '</b>. Pilih bulan Ananda mulai bersekolah di halaman berikutnya.</div>';
+  else {
+    if (a) h += '<div class="info-box">Pendaftaran gelombang <b>' + esc(a.nama) + '</b>, ' + tglPendek(a.mulai) + ' sampai ' + tgl(a.selesai) + '.</div>';
+    const n = noteGelombang(); if (n) h += '<div class="info-box kuning">' + esc(n) + '</div>';
+  }
   return h + '<p class="catatan-kecil">Isian tersimpan otomatis di perangkat ini. Jika terputus, buka kembali situs ini dari HP atau laptop yang sama untuk melanjutkan.</p>';
 }
 function renderPage() {
@@ -575,7 +578,7 @@ async function kirim() {
     const kirimJawaban = Object.assign({}, answers);
     store(DRAFT_KEY, null); S.answers = {}; S.files = {}; S.page = 0;
     $('#doneNo').textContent = r.noReg; $('#doneNama').textContent = r.nama;
-    $('#doneGel').textContent = 'Program ' + r.jenjang + (r.gelombang ? ', gelombang ' + r.gelombang : '') + ', tahun ajaran ' + r.tahunAjaran;
+    $('#doneGel').textContent = 'Program ' + r.jenjang + (S.d.jalan ? ', mulai masuk ' + (kirimJawaban.bulan_masuk || '') : r.gelombang ? ', gelombang ' + r.gelombang : '') + ', tahun ajaran ' + r.tahunAjaran;
     $('#donePesan').textContent = S.d.settings.pesanSukses || '';
     $('#doneKurang').innerHTML = r.kurang && r.kurang.length ? '<div class="info-box kuning" style="text-align:left"><b>Data/berkas yang masih perlu dilengkapi:</b><ul style="margin:6px 0 0;padding-left:20px">' + r.kurang.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' +
       '<div style="margin-top:10px">Lengkapi kapan saja lewat tautan ini (simpan atau kirim ke orang tua):<br><a href="' + esc(r.link) + '" target="_blank" rel="noopener" style="word-break:break-all">' + esc(r.link) + '</a></div></div>' : '';
