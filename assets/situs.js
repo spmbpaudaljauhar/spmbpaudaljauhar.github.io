@@ -5,6 +5,8 @@
 /* URL Web App Apps Script (Deploy > Manage deployments, berakhiran /exec) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbyYcNAGPvLZ6tnF9VAdm7sLof-NGktwO0VNXqOWLE79Q14fJ3vP7Zmi7ouczrmUWOWCVg/exec';
 var BOOT_KEY = 'spmb_aljauhar_boot_v2';
+/* Google Analytics: isi dengan Measurement ID dari Google Analytics, mis. 'G-AB12CD34EF'. Kosong = tidak mencatat. */
+var GA_ID = 'G-J99STZ0ECS';
 var PREVIEW = !!window.__PREVIEW__;
 
 /* Tautan lama /spmb/?lengkapi=…, ?petugas=…, ?uji=… dialihkan ke /daftar/ */
@@ -12,6 +14,27 @@ var PREVIEW = !!window.__PREVIEW__;
   if (PREVIEW) return;
   var p = location.pathname.toLowerCase().replace(/\/+$/, '');
   if (p === '/spmb' && /[?&](lengkapi|petugas|uji|masuk)=/.test(location.search)) location.replace('/daftar/' + location.search + location.hash);
+})();
+
+/* Statistik kunjungan (anonim). Alamat dicatat tanpa ?… supaya kode tautan pribadi tidak ikut terkirim. */
+function lacak(nama, param) { try { if (window.gtag) window.gtag('event', nama, param || {}); } catch (e) {} }
+/* Hanya parameter utm_… (penanda sumber tautan) yang ikut dicatat; kode pribadi lain dibuang. */
+function utmSaja() {
+  const p = new URLSearchParams(location.search), q = new URLSearchParams();
+  p.forEach((v, k) => { if (/^utm_/.test(k)) q.set(k, v); });
+  const t = q.toString(); return t ? '?' + t : '';
+}
+(function () {
+  if (PREVIEW || !GA_ID) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', GA_ID, {
+    page_location: location.origin + location.pathname + utmSaja(), page_referrer: document.referrer ? document.referrer.split('?')[0] : '',
+    allow_google_signals: false, allow_ad_personalization_signals: false   /* hanya hitung kunjungan, tanpa iklan/profil */
+  });
+  const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_ID);
+  document.head.appendChild(s);
 })();
 
 async function api(fn, args) {
