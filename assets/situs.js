@@ -211,7 +211,17 @@ function pasangMenu() {
     g.classList.toggle('buka', buka); b.setAttribute('aria-expanded', buka);
   }));
   document.addEventListener('click', e => { if (!e.target.closest('.nav-grup')) document.querySelectorAll('.nav-grup').forEach(x => { x.classList.remove('buka'); x.firstChild.setAttribute('aria-expanded', 'false'); }); });
-  nav.addEventListener('click', e => { if (e.target.closest('a')) { nav.classList.remove('buka'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-terbuka'); } });
+  nav.addEventListener('click', e => { if (e.target.closest('a') || e.target === nav) { nav.classList.remove('buka'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-terbuka'); } });
+  /* Di HP, menu dipindah langsung ke bawah <body> supaya bisa menutupi seluruh layar */
+  const hp = window.matchMedia('(max-width:960px)'), wrap = top.querySelector('.wrap');
+  const tempatkan = () => {
+    if (hp.matches) { if (nav.parentElement !== document.body) document.body.appendChild(nav); }
+    else { if (nav.parentElement !== wrap) wrap.appendChild(nav); nav.classList.remove('buka'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-terbuka'); }
+  };
+  tempatkan();
+  if (hp.addEventListener) hp.addEventListener('change', tempatkan); else if (hp.addListener) hp.addListener(tempatkan);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('buka')) btn.click(); });
+  document.addEventListener('click', e => { if (nav.classList.contains('buka') && !nav.contains(e.target) && !btn.contains(e.target)) btn.click(); });
   const cek = () => top.classList.toggle('bergulir', window.scrollY > 8);
   window.addEventListener('scroll', cek, { passive: true }); cek();
 }
