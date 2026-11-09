@@ -681,3 +681,31 @@ footer.kaki::before{content:"";position:absolute;left:0;right:0;top:-46px;height
 .kp-foto img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .kp-foto figure:first-child img{aspect-ratio:16/10}
 .kp-foto figcaption{padding:10px 14px;font-size:.88rem;color:var(--abu);font-weight:500}
+
+/* =========================================================
+   Menu HP: panel setengah layar di kanan, latar semi transparan
+   ========================================================= */
+@media (max-width:960px){
+  .top{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff}
+  .nav{position:fixed;left:auto;right:0;top:72px;bottom:0;width:max(52%,250px);max-width:100%;height:auto;margin:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:0;
+    padding:10px 22px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto;z-index:60;
+    background:rgba(15,33,79,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border-radius:18px 0 0 18px;box-shadow:-12px 0 32px rgba(15,33,79,.18);
+    opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .2s ease,transform .2s ease,visibility .2s}
+  .nav.buka{opacity:1;visibility:visible;transform:none}
+  .nav > *{flex-shrink:0}
+  .nav-grup{display:block;margin-top:8px}
+  .nav .nav-induk,.nav .nav-grup.buka .nav-induk,.nav .nav-induk:hover{display:block;width:auto;padding:10px 0 2px;background:none;pointer-events:none;border-radius:0;
+    font:700 .72rem/1.2 var(--body);letter-spacing:.16em;text-transform:uppercase;color:#9FD3F2}
+  .nav .nav-induk svg{display:none}
+  .nav-sub,.nav-grup.buka .nav-sub{position:static;display:flex;flex-direction:column;gap:0;padding:0;margin:0;
+    min-width:0;opacity:1;visibility:visible;transform:none;background:none;border:0;box-shadow:none}
+  .nav-sub a,.nav > a,.nav .nav-daftar{display:block;flex-shrink:0;width:auto;min-height:0;margin:0;padding:8px 0;border:0;border-radius:0;background:none;
+    text-align:left;font:600 1.02rem/1.3 var(--body);color:#fff;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .nav > a:first-of-type{margin-top:12px}
+  .nav-sub a:hover,.nav > a:hover,.nav-sub a.aktif,.nav > a.aktif{background:none;color:var(--kuning)}
+  .nav .nav-daftar{color:var(--kuning);font-weight:700}
+  .nav .nav-daftar:hover,.nav .nav-daftar.aktif{background:none;color:#FFD96B}
+  body.menu-terbuka{overflow:hidden}
+}
