@@ -11,7 +11,7 @@ var PREVIEW = !!window.__PREVIEW__;
 (function () {
   if (PREVIEW) return;
   var p = location.pathname.toLowerCase().replace(/\/+$/, '');
-  if (p === '/spmb' && /[?&](lengkapi|petugas|uji)=/.test(location.search)) location.replace('/daftar/' + location.search + location.hash);
+  if (p === '/spmb' && /[?&](lengkapi|petugas|uji|masuk)=/.test(location.search)) location.replace('/daftar/' + location.search + location.hash);
 })();
 
 async function api(fn, args) {
