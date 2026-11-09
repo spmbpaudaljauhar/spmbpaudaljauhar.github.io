@@ -2,11 +2,14 @@
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halaman tidak ditemukan · PAUD AL-JAUHAR</title>
 <script>
-/* Alamat dengan huruf besar (mis. /SPMB, /KB-TK) diarahkan ke alamat huruf kecil */
+/* Alamat huruf besar atau alamat menu diarahkan ke halaman yang benar */
 (function () {
   var ada = ['selayang-pandang', 'visi-misi', 'kegiatan-pembelajaran', 'guru-tendik', 'kb-tk', 'kelas-trial', 'spmb', 'cek-status', 'daftar'];
+  var lain = { 'tentang-kami': 'selayang-pandang', 'program': 'kb-tk', 'tk-kb-tpa': 'kb-tk' };
   var p = location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
-  if (ada.indexOf(p) >= 0) location.replace('/' + p + '/' + location.search + location.hash);
+  if (p.indexOf('tentang-kami/') === 0 || p.indexOf('program/') === 0) p = p.split('/')[1];
+  var ke = ada.indexOf(p) >= 0 ? p : lain[p];
+  if (ke) location.replace('/' + ke + '/' + location.search + location.hash);
 })();
 </script>
 <style>body{font-family:system-ui,sans-serif;max-width:44ch;margin:96px auto;padding:0 20px;color:#16213D}a{color:#1B3A8A}</style>
