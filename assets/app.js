@@ -571,7 +571,7 @@ async function kirim() {
   const files = {}; docsAktif().forEach(d => { if (S.files[d.id]) files[d.id] = S.files[d.id].fileId; });
   const answers = {}; S.d.questions.filter(applies).forEach(q => { answers[q.id] = visible(q) && S.answers[q.id] != null ? S.answers[q.id] : ''; });
   try {
-    const r = await run('submitRegistration', { answers: answers, files: files, uji: S.d.uji || '', petugas: S.d.petugas || '' });
+    const r = await run('submitRegistration', { answers: answers, files: files, uji: S.d.uji || '', petugas: S.d.petugas || '', masuk: (S.d.jalan && S.d.jalan.token) || '' });
     const kirimJawaban = Object.assign({}, answers);
     store(DRAFT_KEY, null); S.answers = {}; S.files = {}; S.page = 0;
     $('#doneNo').textContent = r.noReg; $('#doneNama').textContent = r.nama;
@@ -688,6 +688,10 @@ function terapkanRute() {
   document.title = (r ? info.judul + ' · ' : '') + nama + (r ? '' : ' · ' + (S.d.settings.subjudulHero || 'Magelang'));
 
   if (r === 'cek-status') show('status');
+  else if (r === 'daftar' && S.d.jalanError) {
+    show('home'); document.querySelectorAll('[data-hal]').forEach(el => el.classList.add('bukan-hal'));
+    ph.classList.remove('hidden'); $('#pageJudul').textContent = 'Tautan tidak berlaku'; $('#pageSub').textContent = S.d.jalanError;
+  }
   else if (r === 'daftar') {
     if (S.d.lengkapi) { /* renderLengkapi membuka formulirnya sendiri */ }
     else if (S.d.gel.open) startFormAsli();
@@ -799,12 +803,21 @@ function pasangReveal() {
   });
 }
 
+/* ---------- penanda pendaftaran tahun berjalan ---------- */
+function tandaJalan() {
+  if (!S.d.jalan || document.querySelector('.mode-jalan')) return;
+  const u = document.createElement('div'); u.className = 'mode-sekolah mode-jalan'; u.setAttribute('role', 'status');
+  u.innerHTML = '<span class="titik"></span>Pendaftaran tahun berjalan · TA ' + esc(S.d.jalan.ta);
+  document.body.appendChild(u);
+}
+
 /* ---------- mulai ---------- */
 S.rute = ruteSekarang();
 renderHome();
 if (!S.d.error) {
   renderSitus();
   terapkanRute();
+  tandaJalan();
   if (PREVIEW) window.addEventListener('hashchange', () => { terapkanRute(); window.scrollTo(0, 0); });
   if (!PREVIEW && S.rute === '' && location.hash) setTimeout(() => { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }, 60);
 }
