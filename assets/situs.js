@@ -136,6 +136,7 @@ function templateSitus() {
       '<div class="kotak"><h3 class="judul-kecil" id="infoJudul">Alur pendaftaran</h3><figure class="alur-gambar hidden" id="alurGambar"></figure><div id="infoTeks"></div></div>' +
     '</div></div></section>' +
     '<section class="blok hidden" id="galeriBox" data-hal="home"><div class="wrap"><span class="alis">Galeri</span><h2 class="judul">Galeri kegiatan</h2><div class="galeri" id="galeri" aria-roledescription="carousel" aria-label="Foto kegiatan sekolah" tabindex="0"></div><div class="g-titik" id="galeriTitik"></div></div></section>' +
+    '<section class="blok" id="lokasi" data-hal="home selayang-pandang spmb"><div class="wrap"><div class="peta" id="peta"></div></div></section>' +
     '<figure class="hiasan hidden" data-hiasan="1" data-hal="selayang-pandang"></figure>' +
     '<figure class="hiasan hidden" data-hiasan="2" data-hal="kegiatan-pembelajaran"></figure>' +
     '<section class="ajak" id="ajak" data-hal="home spmb"><div class="wrap">' +
