@@ -760,6 +760,15 @@ function renderSitus() {
   if (st.whatsapp) $('#trialWa').href = 'https://wa.me/' + waNum(st.whatsapp) + '?text=' + encodeURIComponent('Assalamu’alaikum, saya ingin bertanya tentang Kelas Trial di ' + nama + '.');
   else $('#trialWa').classList.add('hidden');
 
+  // Peta lokasi
+  const petaSrc = (() => {
+    const t = String(st.petaEmbed || '').trim(), m = t.match(/src=["']([^"']+)["']/i), u = m ? m[1] : t;
+    if (/^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed\?/i.test(u)) return u.replace(/&amp;/g, '&');
+    return 'https://www.google.com/maps?q=' + encodeURIComponent(st.petaCari || (nama + ', ' + (st.alamat || 'Magelang'))) + '&output=embed';
+  })();
+  $('#peta').innerHTML = PREVIEW ? '<div class="peta-pratinjau">Peta Google Maps tampil di sini setelah dipasang</div>'
+    : '<iframe src="' + esc(petaSrc) + '" title="Peta lokasi ' + esc(nama) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+
   // Kaki situs
   const logo = imgs('logo')[0];
   if (logo) { $('#footLogo').src = logo.url; $('#footLogo').alt = 'Logo ' + nama; $('#footLogo').classList.remove('hidden'); }
@@ -794,7 +803,7 @@ function geserGuru(d) { const rel = $('#guruRel'); const k = rel.querySelector('
 /* ---------- animasi muncul ke atas ---------- */
 let pengamat = null;
 function pasangReveal() {
-  const target = document.querySelectorAll('#view-home .alis, #view-home .judul, #view-home .judul-kecil, #view-home .lead, #view-home .status-kartu, .tiket, .sp-teks p, .kp-teks p, .kp-daftar li, .kp-foto figure, .sp-gambar img, .prestasi li, .chip-list li, .vm-visi, .vm-misi li, .guru-kartu, .prog-kartu, .layanan-kartu, .trial-foto, .jadwal-kartu, .trial-info, #trialWa, #info .kotak, .galeri, #ajak .wrap > *, .hero-teks > *, .page-head .wrap > *');
+  const target = document.querySelectorAll('#view-home .alis, #view-home .judul, #view-home .judul-kecil, #view-home .lead, #view-home .status-kartu, .tiket, .sp-teks p, .kp-teks p, .kp-daftar li, .kp-foto figure, .sp-gambar img, .prestasi li, .chip-list li, .vm-visi, .vm-misi li, .guru-kartu, .prog-kartu, .layanan-kartu, .trial-foto, .jadwal-kartu, .trial-info, #trialWa, #info .kotak, .galeri, .peta, #ajak .wrap > *, .hero-teks > *, .page-head .wrap > *');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { target.forEach(el => el.classList.add('tampil')); return; }
   if (!pengamat) pengamat = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('tampil'); pengamat.unobserve(e.target); } }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   const urut = new Map();
@@ -805,6 +814,21 @@ function pasangReveal() {
     pengamat.observe(el);
   });
 }
+
+/* ---------- statistik: kejadian penting (tanpa data pribadi) ---------- */
+const showAsli = show;
+show = function (v) {
+  showAsli(v);
+  const jalur = S.d.jalan ? 'tahun_berjalan' : S.d.petugas ? 'di_sekolah' : S.d.lengkapi ? 'lengkapi' : 'online';
+  if (v === 'form' && !S.sudahLacakForm) { S.sudahLacakForm = 1; lacak('mulai_isi_formulir', { jalur: jalur }); }
+  if (v === 'done') lacak('pendaftaran_terkirim', { jalur: jalur });
+};
+document.addEventListener('click', e => {
+  const a = e.target.closest('a'); if (!a) return;
+  if (/wa\.me\//.test(a.href)) lacak('klik_whatsapp', { lokasi: a.id || (a.closest('footer') ? 'footer' : 'halaman') });
+  else if (a.classList.contains('sos')) lacak('klik_sosmed', { platform: a.getAttribute('title') || '' });
+  else if (a.classList.contains('brosur-link')) lacak('unduh_brosur');
+});
 
 /* ---------- penanda pendaftaran tahun berjalan ---------- */
 function tandaJalan() {
