@@ -416,11 +416,16 @@ function renderLengkapi() {
   S.answers = Object.assign({}, L.answers);
   const qs = S.d.questions.filter(q => L.qIds.indexOf(q.id) >= 0);
   const docs = S.d.docs.filter(d => L.dIds.indexOf(d.id) >= 0);
+  if (!qs.length && !docs.length && L.perbaikan) { $('#stepBody').innerHTML = '<h2>Dokumen sudah diperbaiki</h2><p class="petunjuk">Terima kasih, dokumen Ananda ' + esc(L.nama) + ' (' + esc(L.noReg) + ') sudah kami terima.</p>'; return; }
   if (!qs.length && !docs.length) { $('#stepBody').innerHTML = '<h2>Data sudah lengkap</h2><p class="petunjuk">Terima kasih, data pendaftaran Ananda ' + esc(L.nama) + ' (' + esc(L.noReg) + ') sudah lengkap.</p>'; return; }
   const per = {}, urut = [];
   qs.forEach(q => { if (!per[q.bagian]) { per[q.bagian] = []; urut.push(q.bagian); } per[q.bagian].push(q); });
   const st = S.d.settings;
-  $('#stepBody').innerHTML = '<h2>Lengkapi data pendaftaran</h2><p class="petunjuk">Ananda <b>' + esc(L.nama) + '</b>, nomor pendaftaran <b>' + esc(L.noReg) + '</b>. Isi yang sudah tersedia dulu; sisanya bisa dilengkapi lain waktu lewat tautan yang sama.</p>' +
+  const alasan = L.alasan || {}, adaAlasan = docs.filter(d => alasan[d.id]);
+  $('#stepBody').innerHTML = (L.perbaikan
+      ? '<h2>Perbaiki dokumen</h2><p class="petunjuk">Ananda <b>' + esc(L.nama) + '</b>, nomor pendaftaran <b>' + esc(L.noReg) + '</b>. Dokumen di bawah ini belum sesuai. Mohon unggah ulang dokumen yang benar, lalu klik Kirim.</p>' +
+        (adaAlasan.length ? '<div class="info-box kuning">' + adaAlasan.map(d => '<b>' + esc(d.nama) + ':</b> ' + esc(alasan[d.id])).join('<br>') + '</div>' : '')
+      : '<h2>Lengkapi data pendaftaran</h2><p class="petunjuk">Ananda <b>' + esc(L.nama) + '</b>, nomor pendaftaran <b>' + esc(L.noReg) + '</b>. Isi yang sudah tersedia dulu; sisanya bisa dilengkapi lain waktu lewat tautan yang sama.</p>') +
     urut.map(b => '<h3 style="font:600 1.1rem var(--display);color:var(--navy);margin:18px 0 10px">' + esc(b) + '</h3>' + fieldsHtml(per[b])).join('') +
     (docs.length ? '<h3 style="font:600 1.1rem var(--display);color:var(--navy);margin:18px 0 10px">Dokumen</h3>' +
       (docs.some(d => /transfer|bayar/i.test(d.nama)) && (st.biayaPendaftaran || st.infoPembayaran) ? '<div class="info-box kuning" style="white-space:pre-line">' + (st.biayaPendaftaran ? 'Biaya pendaftaran <b>' + esc(rupiah(st.biayaPendaftaran)) + '</b>\n' : '') + esc(st.infoPembayaran || '') + '</div>' : '') +
@@ -442,7 +447,14 @@ async function kirimLengkapi() {
   if (!Object.keys(answers).length && !Object.keys(files).length) { toast('Belum ada isian atau berkas yang diisi.'); return; }
   const b = $('#lengkapiBtn'); b.disabled = true; b.textContent = 'Mengirim…';
   try {
-    const r = await run('submitLengkapi', { noReg: L.noReg, kode: L.kode, answers: answers, files: files });
+    const r = await run('submitLengkapi', { noReg: L.noReg, kode: L.kode, answers: answers, files: files, perbaikan: !!L.perbaikan });
+    if (L.perbaikan) {
+      const ps = r.perbaikanSisa || [];
+      $('#stepBody').innerHTML = ps.length
+        ? '<h2>Terima kasih, dokumen tersimpan</h2><p class="petunjuk">Masih ada dokumen yang perlu diperbaiki:</p><ul>' + ps.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><p class="petunjuk">Silakan buka kembali tautan yang sama untuk mengunggahnya.</p>'
+        : '<h2>Terima kasih</h2><p class="petunjuk">Dokumen perbaikan Ananda ' + esc(L.nama) + ' sudah kami terima.</p>';
+      return;
+    }
     $('#stepBody').innerHTML = r.kurang.length
       ? '<h2>Terima kasih, data tersimpan</h2><p class="petunjuk">Masih ada yang perlu dilengkapi:</p><ul>' + r.kurang.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><p class="petunjuk">Silakan buka kembali tautan yang sama untuk melengkapinya, atau bawa berkasnya ke sekolah.</p><div class="nav-form"><button class="btn btn-navy" onclick="location.reload()">Lengkapi sisanya sekarang</button></div>'
       : '<h2>Data sudah lengkap</h2><p class="petunjuk">Terima kasih, data pendaftaran Ananda ' + esc(L.nama) + ' sudah lengkap.</p>';
